@@ -133,8 +133,17 @@ export function GenerationSidebar({ mapRef }: GenerationSidebarProps) {
       setGenerationStage("Rendering...");
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Generation failed");
+        let errMsg = "Generation failed";
+        try {
+          const err = await res.json();
+          errMsg = err.error || errMsg;
+        } catch {
+          const text = await res.text();
+          if (text) errMsg = text.includes("Request Entity Too Large") 
+            ? "Image too large — try zooming in or selecting a smaller area"
+            : text.slice(0, 100);
+        }
+        throw new Error(errMsg);
       }
 
       const data = await res.json();

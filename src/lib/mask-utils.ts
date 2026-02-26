@@ -227,7 +227,8 @@ export async function captureSiteScreenshot(
 
   const mapCanvas = map.getCanvas();
 
-  const MAX_DIM = 1536;
+  // Keep under Vercel's 4.5MB body limit — base64 adds ~33%, so target ~3MB raw
+  const MAX_DIM = 1024;
   let { width, height } = mapCanvas;
   const scaleFactor =
     width > MAX_DIM || height > MAX_DIM
@@ -289,7 +290,7 @@ export async function captureSiteScreenshot(
     map.setPitch(pitch);
   }
 
-  const dataUrl = resizeCanvas.toDataURL("image/jpeg", 0.85);
+  const dataUrl = resizeCanvas.toDataURL("image/jpeg", 0.8);
 
   return {
     dataUrl,
